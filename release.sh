@@ -22,6 +22,7 @@ if git status | grep "nothing to commit, working tree clean" > /dev/null; then
     fi
 
     VERSION="$V1.$V2.$V3"
+    sed -i "s/version[[:space:]]*=.*/version = \"$VERSION-0\"/" rockspec
     sed -i "s/tag[[:space:]]*=.*/tag = \"$VERSION\"/" rockspec
     echo "Releasing version $VERSION"
     git commit -m "Version incremented to $VERSION"
