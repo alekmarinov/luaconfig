@@ -25,7 +25,7 @@ if git status | grep "nothing to commit, working tree clean" > /dev/null; then
     sed -i "s/version[[:space:]]*=.*/version = \"$VERSION-0\"/" rockspec
     sed -i "s/tag[[:space:]]*=.*/tag = \"$VERSION\"/" rockspec
     echo "Releasing version $VERSION"
-    git commit -m "Version incremented to $VERSION"
+    git commit -a -m "Version incremented to $VERSION"
     git tag -a $VERSION -m "Tagged version $VERSION"
     git log -10 --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
     git push --tags
