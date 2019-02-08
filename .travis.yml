@@ -24,7 +24,7 @@ before_install:
   - sudo make install
   - luarocks install busted --local
   - luarocks install luacov --local
-  - luarocks install luacov-coveralls --local
+  - luarocks install luacov-coveralls --local --server=https://luarocks.org/dev
   - popd
 
 install:
