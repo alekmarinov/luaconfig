@@ -1,6 +1,8 @@
+dist: trusty
+
 language: c
 
-sudo: false
+sudo: true
 
 env:
   global:
@@ -13,11 +15,13 @@ branches:
     - master
 
 before_install:
+  - pushd
   - wget -O - https://www.lua.org/ftp/lua-$LUAVER.tar.gz | tar -xz
-  - cd lua-$LUAVER && make linux && make install INSTALL_TOP=$TRAVIS_BUILD_DIR
+  - cd lua-$LUAVER && make linux && make install
   - wget -O - http://luarocks.github.io/luarocks/releases/luarocks-$LUAROCKSVER.tar.gz | tar -xz
-  - cd luarocks-$LUAROCKSVER && ./configure --prefix=$TRAVIS_BUILD_DIR && make && make install
+  - cd luarocks-$LUAROCKSVER && ./configure && make && make install
   - luarocks install busted
+  - popd
 
 install:
   - luarocks make
