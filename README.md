@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/alekmarinov/luaconfig.svg?branch=master)](https://travis-ci.org/alekmarinov/luaconfig)
+
 # LuaConfig
 
 Lua module providing advance configuration functionality.

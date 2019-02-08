@@ -23,15 +23,18 @@ before_install:
   - cd luarocks-$LUAROCKSVER && ./configure && make
   - sudo make install
   - luarocks install busted --local
+  - luarocks install luacov --local
+  - luarocks install luacov-coveralls --local
   - popd
 
 install:
   - luarocks make --local
 
 script:
-  - busted
+  - busted -c
 
 after_success:
+  - luacov-coveralls
 
 notifications:
   email:
