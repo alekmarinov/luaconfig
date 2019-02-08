@@ -1,4 +1,6 @@
 [![Build Status](https://travis-ci.org/alekmarinov/luaconfig.svg?branch=master)](https://travis-ci.org/alekmarinov/luaconfig)
+[![Coverage Status](https://coveralls.io/repos/github/alekmarinov/luaconfig/badge.svg?branch=master)](https://coveralls.io/github/alekmarinov/luaconfig?branch=master)
+[![License](http://img.shields.io/badge/License-MIT-brightgreen.svg)](LICENSE)
 
 # LuaConfig
 
