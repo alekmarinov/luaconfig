@@ -26,7 +26,7 @@ before_install:
   - popd
 
 install:
-  - luarocks make
+  - luarocks make --local
 
 script:
   - busted
