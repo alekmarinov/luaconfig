@@ -15,7 +15,7 @@ branches:
     - master
 
 before_install:
-  - pushd
+  - pushd $(pwd)
   - wget -O - https://www.lua.org/ftp/lua-$LUAVER.tar.gz | tar -xz
   - cd lua-$LUAVER && make linux && make install
   - wget -O - http://luarocks.github.io/luarocks/releases/luarocks-$LUAROCKSVER.tar.gz | tar -xz
