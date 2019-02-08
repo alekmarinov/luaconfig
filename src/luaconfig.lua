@@ -67,11 +67,6 @@ function luaconfig:set(key, value)
             key, value = nil, nil
         end
     end
-    if value then
-        -- submit multiline value
-        value = value:sub(1, -2)
-        self:_set(trim(key), trim(tostring(value)))
-    end
 end
 
 --
