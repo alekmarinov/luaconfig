@@ -87,6 +87,52 @@ describe("set and get values", function()
             ]])
         assert.are.same("-m64", conf:get("gcc.cflags"))
     end)
+    it("value can continue to the next line", function()
+        local conf = config()
+        conf:set([[
+            name=multi\
+                 line\
+                 value
+            dummy = \
+                bummy
+            foo=bar\
+                ba\
+        ]])
+        assert.are.same("multilinevalue", conf:get("name"))
+        assert.are.same("barba", conf:get("foo"))
+        assert.are.same("bummy", conf:get("dummy"))
+    end)
+    it("spaces are allowed around the equals sign", function()
+        local conf = config()
+        conf:set([[
+            name =              value   
+        ]])
+        assert.are.same("value", conf:get("name"))
+    end)
+    it("throws error on cyclic references", function()
+        local conf = config()
+        conf:set([[
+            ref1=$(ref2)
+            ref2=$(ref3)
+            ref3=$(ref1)
+        ]])
+        assert.has_error(function() conf:get("ref2") end, "Cyclic substitution detected by key `ref2':\nref2,ref3,ref1")
+    end)
+    it("throws error on undefined reference", function()
+        local conf = config()
+        conf:set([[
+            ref=$(undef)
+        ]])
+        assert.has_error(function() conf:get("ref") end, "can't substitute reference `undef''")
+    end)
+    it("escape", function()
+        local conf = config()
+        conf:set([[
+            dir=c:\\a\\b
+        ]])
+        assert.are.same("c:\\a\\b", conf:get("dir"))
+    end)
+
 end)
 
 describe("enumerate", function()
