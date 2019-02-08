@@ -34,7 +34,8 @@ script:
   - busted -c
 
 after_success:
-  - luacov-coveralls
+  - luacov
+  - luacov-coveralls -v
 
 notifications:
   email:
