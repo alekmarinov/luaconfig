@@ -17,10 +17,12 @@ branches:
 before_install:
   - pushd $(pwd)
   - wget -O - https://www.lua.org/ftp/lua-$LUAVER.tar.gz | tar -xz
-  - cd lua-$LUAVER && make linux && make install
+  - cd lua-$LUAVER && make linux
+  - sudo make install
   - wget -O - http://luarocks.github.io/luarocks/releases/luarocks-$LUAROCKSVER.tar.gz | tar -xz
-  - cd luarocks-$LUAROCKSVER && ./configure && make && make install
-  - luarocks install busted
+  - cd luarocks-$LUAROCKSVER && ./configure && make
+  - sudo make install
+  - sudo luarocks install busted
   - popd
 
 install:
