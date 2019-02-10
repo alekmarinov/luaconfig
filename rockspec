@@ -1,5 +1,5 @@
 package = "luaconfig"
-version = ""
+version = "0.0.0-0"
 source = {
   url = "git://github.com/alekmarinov/luaconfig.git",
   tag = ""
