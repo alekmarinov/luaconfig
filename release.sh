@@ -24,8 +24,10 @@ if git status | grep "nothing to commit, working tree clean" > /dev/null ; then
 
     VERSION="$V1.$V2.$V3"
     echo "Releasing version $VERSION"
-    sed -i "s/version[[:space:]]*=.*/version = \"$VERSION-0\"/" rockspec
-    sed -i "s/tag[[:space:]]*=.*/tag = \"$VERSION\"/" rockspec
+    rm -f luaconfig-*.rockspec
+    sed "s/version[[:space:]]*=.*/version = \"$VERSION-0\"/" rockspec > luaconfig-$VERSION-0.rockspec
+    sed -i "s/tag[[:space:]]*=.*/tag = \"$VERSION\"/" luaconfig-$VERSION-0.rockspec
+    git add luaconfig-$VERSION-0.rockspec
     git commit -a -m "Version incremented to $VERSION"
     git tag -a $VERSION -m "Tagged version $VERSION"
     git log -10 --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
