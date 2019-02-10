@@ -39,6 +39,7 @@ print(conf:get("gcc.cflags")) -- -m64
 
 # Custom storage implementation
 
+```lua
 local redis = require("redis")
 local config = require("luaconfig")
 
@@ -71,3 +72,4 @@ gcc.cflags=$(host.$(host.os).\ -- multiline
 
 print(conf:get("gcc.cflags")) -- -m64
 print(rcli:get("gcc.cflags")) -- $(host.$(host.os).$(host.arch).cflags)
+```
