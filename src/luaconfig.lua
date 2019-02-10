@@ -1,6 +1,6 @@
-
 local luaconfig = {}
 luaconfig.__index = luaconfig
+
 --
 -- trim string
 --
@@ -122,17 +122,17 @@ local memory_impl = setmetatable({}, luaconfig)
 memory_impl.__index = memory_impl
 
 function memory_impl:_set(key, value)
-    self.storage[self.prefix..key] = value
+    self[key] = value
 end
 
 function memory_impl:_get(key)
-    return self.storage[self.prefix..key]
+    return self[key]
 end
 
 function memory_impl:_keys()
     local keys = {}
-    for k in pairs(self.storage) do
-        table.insert(keys, k:sub(1 + self.prefix:len()))
+    for k in pairs(self) do
+        table.insert(keys, k)
     end
     return keys
 end
@@ -148,8 +148,9 @@ return setmetatable(luaconfig, {
                     assert(iscallable(impl[k]), string.format("Missing %s function implementation", k))
                 end
             end
+            return setmetatable(impl, luaconfig)
+        else
+            return setmetatable({}, memory_impl)
         end
-        impl = impl or { storage = {}, prefix = "" }
-        return setmetatable(impl, memory_impl)
     end
 })
