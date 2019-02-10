@@ -1,4 +1,4 @@
-local config = require("luaconfig.memory")
+local config = require("luaconfig")
 
 local function assert_equal_sets(set1, set2)
     assert.are.same(#set1, #set2)
@@ -18,11 +18,13 @@ describe("new config", function()
         assert.are.same({}, conf:keys())
         assert.are.same({}, conf:values())
     end)
-    it("with custom storage is empty", function()
-        local conf = config{storage={}, prefix="foo.bar"}
-        assert.are.equal("foo.bar", conf.prefix)
-        assert.are.same({}, conf:keys())
-        assert.are.same({}, conf:values())
+    it("custom storage keys and values", function()
+        local conf = config()
+        conf.storage = {
+            name = "value"
+        }
+        assert.are.same({"name"}, conf:keys())
+        assert.are.same({"value"}, conf:values())
     end)
 end)
 
@@ -33,12 +35,15 @@ describe("set and get values", function()
         assert.are.same("value", conf:get("foo.bar"))
     end)
     it("custom storage contain what is set", function()
-        local conf = config{storage={}}
+        local conf = config()
+        conf.storage={}
         conf:set("foo.bar", "value")
         assert.are.same({ ["foo.bar"] = "value" }, conf.storage)
     end)
     it("keys in custom storage have prefix", function()
-        local conf = config{storage={}, prefix="boo."}
+        local conf = config()
+        conf.storage={}
+        conf.prefix="boo."
         conf:set("foo.bar", "value")
         assert.are.same({ ["boo.foo.bar"] = "value" }, conf.storage)
     end)
@@ -143,7 +148,8 @@ describe("enumerate", function()
         assert_equal_sets({ "foo.zar", "foo.bar" }, conf:keys())
     end)
     it("value keys dispite prefix", function()
-        local conf = config{prefix="foo.bar"}
+        local conf = config()
+        conf.prefix="foo.bar"
         conf:set("key1", "value1")
         conf:set("key2", "value2")
         assert_equal_sets({ "key1", "key2" }, conf:keys())
@@ -160,10 +166,41 @@ describe("enumerate", function()
         conf:set("zar", "$(foo.$(foo.bar))")
         assert_equal_sets({ "bar", "bar" }, conf:values())
     end)
-    it("values without computing references", function()
-        local conf = config()
-        conf:set("foo.bar", "bar")
-        conf:set("zar", "$(foo.$(foo.bar))")
-        assert_equal_sets({ "bar", "$(foo.$(foo.bar))" }, conf:rawvalues())
+end)
+
+describe("custom implementation", function()
+    local methods = {
+        _set = function() end,
+        _get = function() end,
+        _keys = function() return {} end
+    }
+    local makeimpl = function(without)
+        local t = {}
+        for m, v in pairs(methods) do
+            if not without or m ~= without then
+                t[m] = v
+            end
+        end
+        return t
+    end
+    it("set/get delegate to impl _set/_get", function()
+        local impl = makeimpl()
+        local mimpl = mock(impl)
+        local conf = config(mimpl)
+        conf:set("foo.bar", "value")
+        conf:get("foo.bar")
+        conf:keys()
+        conf:values()
+        assert.stub(mimpl._set).was.called_with(conf, "foo.bar", "value")
+        assert.stub(mimpl._get).was.called_with(conf, "foo.bar")
+        assert.stub(mimpl._keys).was.called_with(conf)
+    end)
+    it("throws non implemented", function()
+        assert.has_error(function() local conf = config(makeimpl("_set")) end, 
+            "Missing _set function implementation")
+        assert.has_error(function() local conf = config(makeimpl("_get")) end, 
+            "Missing _get function implementation")
+        assert.has_error(function() local conf = config(makeimpl("_keys")) end, 
+            "Missing _keys function implementation")
     end)
 end)

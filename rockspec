@@ -16,7 +16,6 @@ dependencies = {
 build = {
   type = "builtin",
   modules = {
-    ["luaconfig"] = "src/luaconfig.lua",
-    ["luaconfig.memory"] = "src/luaconfig/memory/init.lua"
+    ["luaconfig"] = "src/luaconfig.lua"
   }
 }

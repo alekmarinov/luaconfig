@@ -1,6 +1,6 @@
 
 local luaconfig = {}
-
+luaconfig.__index = luaconfig
 --
 -- trim string
 --
@@ -63,7 +63,8 @@ function luaconfig:set(key, value)
         continuation = line:sub(-1) == "\\" and line:sub(-2,-2) ~= "\\"
         if key and not continuation then
             -- set value with type as a string
-            self:_set(trim(key), trim(tostring(value)))
+            value = trim(tostring(value))
+            self:_set(trim(key), value)
             key, value = nil, nil
         end
     end
@@ -105,6 +106,10 @@ function luaconfig:get(key, nosubst, history)
     return value
 end
 
+function luaconfig:keys()
+    return self:_keys()
+end
+
 function luaconfig:values()
     local values = {}
     for _, key in ipairs(self:keys()) do
@@ -113,4 +118,38 @@ function luaconfig:values()
     return values
 end
 
-return luaconfig
+local memory_impl = setmetatable({}, luaconfig)
+memory_impl.__index = memory_impl
+
+function memory_impl:_set(key, value)
+    self.storage[self.prefix..key] = value
+end
+
+function memory_impl:_get(key)
+    return self.storage[self.prefix..key]
+end
+
+function memory_impl:_keys()
+    local keys = {}
+    for k in pairs(self.storage) do
+        table.insert(keys, k:sub(1 + self.prefix:len()))
+    end
+    return keys
+end
+
+return setmetatable(luaconfig, {
+    __call = function(_, impl)
+        if impl then
+            local iscallable = function(f) 
+                return type(f) == "function" or (type(f) == "table" and type(getmetatable(f).__call) == "function")
+            end
+            for k in pairs(memory_impl) do
+                if iscallable(memory_impl[k]) then
+                    assert(iscallable(impl[k]), string.format("Missing %s function implementation", k))
+                end
+            end
+        end
+        impl = impl or { storage = {}, prefix = "" }
+        return setmetatable(impl, memory_impl)
+    end
+})
