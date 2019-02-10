@@ -1,8 +1,8 @@
 package = "luaconfig"
-version = "0.1.6-0"
+version = "0.1.7-0"
 source = {
   url = "git://github.com/alekmarinov/luaconfig.git",
-  tag = "0.1.6"
+  tag = "0.1.7"
 }
 description = {
   summary = "Lua module providing advance configuration functionality",
