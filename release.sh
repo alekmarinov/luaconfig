@@ -1,7 +1,7 @@
-#!/bin/sh
+#!/bin/bash
 
-if git status | grep "nothing to commit, working tree clean" > /dev/null; then
-    VERSION=`git describe`
+if git status | grep "nothing to commit, working tree clean" > /dev/null ; then
+    VERSION=$(git describe)
 
     VERSION=(${VERSION//[\.\-]/ })
     V1=${VERSION[0]}
